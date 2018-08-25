@@ -41,6 +41,22 @@
 }
 
 - (void)basicAnimation {
+    
+    _basicAniLabel = [[UILabel alloc] initWithFrame:CGRectMake(.0, .0, 320.0, 320.0)];
+    [self.view addSubview:_basicAniLabel];
+    _basicAniLabel.center = self.view.center;
+    _basicAniLabel.text = @"Q·i Share";
+    _basicAniLabel.textAlignment = NSTextAlignmentCenter;
+    _basicAniLabel.font = [UIFont boldSystemFontOfSize:36.0];
+    _basicAniLabel.textColor = [UIColor yellowColor];
+    _basicAniLabel.layer.borderWidth = 40.0;
+    _basicAniLabel.layer.borderColor = [UIColor blueColor].CGColor;
+    _basicAniLabel.backgroundColor = [UIColor redColor];
+    
+    _basicAniLabel.layer.shadowOffset = CGSizeZero;
+    _basicAniLabel.layer.shadowRadius = 30.0;
+    _basicAniLabel.layer.shadowColor = [UIColor yellowColor].CGColor;
+    _basicAniLabel.layer.shadowOpacity = 1.0;
 
     CABasicAnimation *backColorBasAni = [CABasicAnimation animationWithKeyPath:@"backgroundColor"];
     backColorBasAni.fromValue = (__bridge id _Nullable)([UIColor redColor].CGColor);
@@ -98,7 +114,6 @@
     rotateZBasAni.toValue = @(M_PI * 2);
     [_basicAniLabel.layer addAnimation:rotateZBasAni forKey:@"transform.rotation.z"];
     
-    
     // 使用组动画的形式可按如下来写
     CAAnimationGroup *animaGroup = [CAAnimationGroup animation];
     animaGroup.removedOnCompletion = NO;
@@ -114,6 +129,22 @@
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     
+    // CABasicAnimation *positionAnima = [CABasicAnimation animationWithKeyPath:@"position"];
+    // positionAnima.fromValue = [NSValue valueWithCGPoint:CGPointMake(.0, .0)];
+    // positionAnima.toValue = [NSValue valueWithCGPoint:CGPointMake(100.0, 100.0)];
+    // positionAnima.byValue = [NSValue valueWithCGPoint:CGPointMake(300.0, 300.0)];
+    
+    CABasicAnimation *positionAnima = [CABasicAnimation animationWithKeyPath:@"position"];
+    positionAnima.fromValue = [NSValue valueWithCGPoint:CGPointMake(0.0, 100.0)];
+    positionAnima.byValue = [NSValue valueWithCGPoint:CGPointMake(100.0, 100.0)];
+    positionAnima.toValue = [NSValue valueWithCGPoint:CGPointMake(100.0, 200.0)];
+    positionAnima.removedOnCompletion = NO;
+    positionAnima.fillMode = kCAFillModeForwards;
+    
+
+    positionAnima.duration = 3.0;
+    [_basicAniLabel.layer addAnimation:positionAnima forKey:@"position"];
+    return;
     self.view.userInteractionEnabled = NO;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         self.view.userInteractionEnabled = YES;
@@ -135,6 +166,8 @@
      * 可以使用组动画的形式来做这件事(如果可以达到预期，个人建议这种方式)
      * 也可以一个个的添加动画
      */
+    
+    //backgroundColor、borderColor、borderWidth、cornerRadius、transform.scale、shadowRadius、shadowColor、shadowOpacity、transform.rotation.x、transform.rotation.y、transform.rotation.z都添加了动画
 }
 
 @end
