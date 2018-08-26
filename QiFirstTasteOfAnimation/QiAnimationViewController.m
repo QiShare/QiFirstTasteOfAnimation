@@ -38,6 +38,14 @@
     _basicAniLabel.layer.shadowRadius = 30.0;
     _basicAniLabel.layer.shadowColor = [UIColor yellowColor].CGColor;
     _basicAniLabel.layer.shadowOpacity = 1.0;
+    
+    UIButton *startAnimationBtn = [UIButton new];
+    [self.view addSubview:startAnimationBtn];
+    [startAnimationBtn setTitle:@"开始动画" forState:UIControlStateNormal];
+    startAnimationBtn.backgroundColor = [UIColor grayColor];
+    startAnimationBtn.frame = CGRectMake(CGRectGetMidX(self.view.frame) - 50.0, CGRectGetHeight(self.view.frame) - 80.0, 100.0, 40.0);
+    [startAnimationBtn addTarget:self action:@selector(startAnimationButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    
 }
 
 - (void)basicAnimation {
@@ -111,13 +119,13 @@
 
 #pragma mark - Private functions
 
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-
-    self.view.userInteractionEnabled = NO;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        self.view.userInteractionEnabled = YES;
-    });
+- (void)startAnimationButtonClicked:(UIButton *)sender {
+    
     [self basicAnimation];
+    sender.enabled = NO;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        sender.enabled = YES;
+    });
 }
 
 - (void)readMe {
