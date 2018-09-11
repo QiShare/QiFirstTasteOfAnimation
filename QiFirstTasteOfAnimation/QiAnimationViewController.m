@@ -11,6 +11,7 @@
 @implementation QiAnimationViewController{
     
     UILabel *_basicAniLabel; //!> 用于展示基础动画的label
+    UILabel *_basicAnimaFirstStartLabel; //!> firstStart Label
 }
 
 - (void)viewDidLoad {
@@ -22,6 +23,25 @@
 #pragma mark - Private functions
 
 - (void)setupUI {
+    
+    self.title = @"基础动画初识";
+    [self setupFirstStartAnimationLabelUI];
+    [self setupMultipleBasicAnimationLabel];
+    
+    UIButton *startAnimationBtn = [UIButton new];
+    [self.view addSubview:startAnimationBtn];
+    [startAnimationBtn setTitle:@"开始动画" forState:UIControlStateNormal];
+    startAnimationBtn.backgroundColor = [UIColor grayColor];
+    startAnimationBtn.frame = CGRectMake(CGRectGetMidX(self.view.frame) - 50.0, CGRectGetHeight(self.view.frame) - 80.0, 100.0, 40.0);
+    [startAnimationBtn addTarget:self action:@selector(startAnimationButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    
+}
+
+
+/**
+ @brief 添加多个基础动画label的UI部分
+ */
+- (void)setupMultipleBasicAnimationLabel {
     
     _basicAniLabel = [[UILabel alloc] initWithFrame:CGRectMake(.0, .0, 320.0, 320.0)];
     [self.view addSubview:_basicAniLabel];
@@ -39,16 +59,30 @@
     _basicAniLabel.layer.shadowColor = [UIColor yellowColor].CGColor;
     _basicAniLabel.layer.shadowOpacity = 1.0;
     
-    UIButton *startAnimationBtn = [UIButton new];
-    [self.view addSubview:startAnimationBtn];
-    [startAnimationBtn setTitle:@"开始动画" forState:UIControlStateNormal];
-    startAnimationBtn.backgroundColor = [UIColor grayColor];
-    startAnimationBtn.frame = CGRectMake(CGRectGetMidX(self.view.frame) - 50.0, CGRectGetHeight(self.view.frame) - 80.0, 100.0, 40.0);
-    [startAnimationBtn addTarget:self action:@selector(startAnimationButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-    
 }
 
-- (void)basicAnimation {
+
+/**
+ @brief 动画初识LabelUI
+ */
+- (void)setupFirstStartAnimationLabelUI {
+    
+    CGFloat lblW = 200.0;
+    _basicAnimaFirstStartLabel = [[UILabel alloc] initWithFrame:CGRectMake(CGRectGetMidX(self.view.frame) - lblW / 2, 100.0, lblW, 40.0)];
+    
+    [self.view addSubview:_basicAnimaFirstStartLabel];
+    _basicAnimaFirstStartLabel.backgroundColor = [UIColor redColor];
+    _basicAnimaFirstStartLabel.alpha = 0.4;
+    _basicAnimaFirstStartLabel.text = @"Q·i Share";
+    _basicAnimaFirstStartLabel.textAlignment = NSTextAlignmentCenter;
+    _basicAnimaFirstStartLabel.font = [UIFont systemFontOfSize:20.0];
+}
+
+
+/**
+ @brief 动画初识
+ */
+- (void)addBasicAnimation {
 
     CABasicAnimation *backColorBasAni = [CABasicAnimation animationWithKeyPath:@"backgroundColor"];
     backColorBasAni.fromValue = (__bridge id _Nullable)([UIColor redColor].CGColor);
@@ -117,15 +151,58 @@
 }
 
 
+/**
+ @brief 动画初识
+ */
+- (void)basicAnimationFirstStart {
+
+    CABasicAnimation *positionAnima = [CABasicAnimation animationWithKeyPath:@"position.x"];
+    // 指定基础动画的时间间隔，以秒为单位默认值是 0.25
+    positionAnima.duration = 1.5;
+    positionAnima.fromValue = @([UIScreen mainScreen].bounds.size.width / 2.0);
+    positionAnima.toValue = @(-_basicAnimaFirstStartLabel.frame.size.width / 2);
+    positionAnima.fillMode = kCAFillModeForwards;
+    positionAnima.removedOnCompletion = NO;
+    [_basicAnimaFirstStartLabel.layer addAnimation:positionAnima forKey:@"position.x"];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        CABasicAnimation *backPositionAnima = [self qiBasicAnimationWithKeyPath:@"position.x" fromValue:@(-self->_basicAnimaFirstStartLabel.frame.size.width / 2) byValue:nil toValue:@([UIScreen mainScreen].bounds.size.width / 2.0) duration:1.5 fillMode:kCAFillModeForwards removeOnCompletion:NO];
+        [self->_basicAnimaFirstStartLabel.layer addAnimation:backPositionAnima forKey:@"position.x"];
+    });
+    
+    // 改变不透明度基础动画
+    CABasicAnimation *alphaAnima = [self qiBasicAnimationWithKeyPath:@"opacity" fromValue:@(0.4) byValue:nil toValue:@(1.0) duration:3.0 fillMode:kCAFillModeForwards removeOnCompletion:NO];
+    [_basicAnimaFirstStartLabel.layer addAnimation:alphaAnima forKey:@"opacity"];
+}
+
+
 #pragma mark - Private functions
 
 - (void)startAnimationButtonClicked:(UIButton *)sender {
     
-    [self basicAnimation];
+    [self basicAnimationFirstStart];
+    [self addBasicAnimation];
+    
     sender.enabled = NO;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         sender.enabled = YES;
     });
+}
+
+
+/**
+ @brief 快速创建基础动画
+ */
+- (CABasicAnimation *)qiBasicAnimationWithKeyPath:(NSString *)keypath fromValue:(id)fromValue byValue:(id)byValue toValue:(id)toValue duration:(NSTimeInterval)duration fillMode:(NSString *)fillMode removeOnCompletion:(BOOL)removeOnCompletion{
+    
+    CABasicAnimation *basicAnima = [CABasicAnimation animationWithKeyPath:keypath];
+    basicAnima.fromValue = fromValue;
+    basicAnima.toValue = toValue;
+    basicAnima.byValue = byValue;
+    basicAnima.duration = duration;
+    basicAnima.fillMode = fillMode;
+    basicAnima.removedOnCompletion = removeOnCompletion;
+    return basicAnima;
 }
 
 - (void)readMe {
